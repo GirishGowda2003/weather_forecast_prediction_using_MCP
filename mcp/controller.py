@@ -11,7 +11,7 @@ class MCPController:
         return self.model(query)
 
     def _extract_city(self, query):
-        words = query.split()
+        words = query.strip()
         for i, word in enumerate(words):      # enumerate loop with index and value of words
             if word.lower() in ("in", "for", "at") and i + 1 < len(words):
                 return words[i + 1].strip("?.,!")

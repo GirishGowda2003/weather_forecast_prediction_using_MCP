@@ -4,6 +4,14 @@ class MCPController:
         self.registry = registry
 
     def handle(self, query):
+        # Guard: always work with a plain string
+        if not isinstance(query, str):
+            query = " ".join(query) if isinstance(query, (list, tuple)) else str(query)
+        query = query.strip()
+
+        if not query:
+            return "Please enter a query."
+
         if "weather" in query.lower():
             city = self._extract_city(query)
             result = self.registry.call_tool("get_weather", city)
@@ -11,8 +19,9 @@ class MCPController:
         return self.model(query)
 
     def _extract_city(self, query):
-        words = query.split()
+        words = str(query).split()
         for i, word in enumerate(words):
             if word.lower() in ("in", "for", "at") and i + 1 < len(words):
-                return words[i + 1].strip("?.,!")
+                # strip trailing punctuation from the city token
+                return str(words[i + 1]).strip("?.,!")
         return "Bangalore"
